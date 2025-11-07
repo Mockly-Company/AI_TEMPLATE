@@ -7,7 +7,7 @@ Claude Code를 효과적으로 활용하기 위한 커스텀 명령어와 스킬
 - [적용 방법](#적용-방법)
 - [빠른 시작](#빠른-시작)
 - [코드 리뷰](#코드-리뷰)
-- [자동 테스트 생성](#자동-테스트-생성)
+- [테스트 생성 스킬](#테스트-생성-스킬)
 - [개발 도구 스킬](#개발-도구-스킬)
 - [프로젝트 설정](#프로젝트-설정)
 
@@ -15,233 +15,191 @@ Claude Code를 효과적으로 활용하기 위한 커스텀 명령어와 스킬
 
 ## 코드 리뷰
 
-커스텀 슬래시 커맨드를 통해 자동화된 코드 리뷰를 제공합니다.
+Git 변경사항을 자동으로 감지하여 프론트엔드/백엔드에 맞는 전문적인 코드 리뷰를 제공합니다.
 
-### 사용 가능한 커맨드
+### Code Review 스킬
 
-#### 1. `/code-review` - 통합 코드 리뷰
-변경된 파일을 자동 감지하여 적절한 코드 리뷰를 수행합니다.
+변경된 파일의 타입을 자동으로 분석하여 적절한 리뷰 가이드를 참조합니다.
 
-```bash
-/code-review
+**사용 방법:**
 ```
-
-#### 2. `/review-frontend` - 프론트엔드 리뷰
-프론트엔드 코드에 대한 전문적인 리뷰를 수행합니다.
-
-```bash
-/review-frontend
-```
-
-**검토 항목:**
-- 코드 품질 (컴포넌트 구조, 재사용성, 네이밍 컨벤션)
-- React 특화 (리렌더링 최적화, 상태 관리, useEffect)
-- 성능 (번들 사이즈, lazy loading, API 최적화)
-- 보안 (XSS, 민감 정보 노출, CSRF)
-- 접근성 (a11y, 시맨틱 HTML, ARIA)
-- 타입 안전성 (TypeScript, any 사용 최소화)
-
-#### 3. `/review-backend` - 백엔드 리뷰
-백엔드 코드에 대한 전문적인 리뷰를 수행합니다.
-
-```bash
-/review-backend
-```
-
-**검토 항목:**
-- 코드 품질 (구조, 네이밍, DRY 원칙)
-- 아키텍처 (계층 분리, 의존성, SOLID)
-- 성능 (쿼리 최적화, 캐싱, 비동기 처리)
-- 보안 (SQL Injection, 인증/인가, 민감 정보)
-- 에러 처리 (예외 처리, 로깅, 복구 전략)
-- 테스트 (단위/통합 테스트, 커버리지)
-
-### 사용 팁
-
-1. **코드 작성 후 즉시 리뷰**: 커밋 전에 리뷰 커맨드를 실행하세요
-2. **특화된 리뷰 활용**: 프론트/백엔드 전문 리뷰로 더 상세한 피드백 받기
-3. **자동 감지**: `/code-review`는 변경사항을 자동으로 분석합니다
-
----
-
-## 자동 테스트 생성
-
-코드 변경을 감지하고 자동으로 테스트 코드를 생성합니다.
-
-### 사용 방법
-
-Claude Code에서 스킬을 호출하세요:
-
-```
-auto-test-generator
+code-review
 ```
 
 또는 자연어로 요청:
 ```
-"변경된 코드에 대한 테스트 생성해줘"
-"UserProfile 컴포넌트 테스트 코드 만들어줘"
+"코드 리뷰해줘"
+"변경사항 검토해줘"
 ```
 
-### 주요 기능
+### 자동 분류 시스템
 
-#### 1. 자동 변경사항 감지
-- Git diff를 통해 변경된 파일 자동 스캔
-- 프론트엔드/백엔드 파일 자동 분류
-- 새로운 함수, 컴포넌트, API 엔드포인트 감지
+스킬이 파일을 자동으로 분류하여 적절한 검토를 수행합니다:
 
-#### 2. 프론트엔드 테스트 생성
-**지원 대상:**
-- React 컴포넌트 (렌더링, Props, 이벤트 핸들러)
-- Custom Hooks (상태 관리, 부작용)
-- 유틸리티 함수 (정상/엣지/에러 케이스)
+#### 프론트엔드 파일
+- React/React Native 컴포넌트: `*.tsx`, `*.jsx`
+- 프론트엔드 디렉토리: `src/components/`, `src/screens/`, `src/hooks/`
+- 스타일: `*.css`, `*.scss`
 
-**테스트 프레임워크:**
-- Jest + React Testing Library
-- @testing-library/react-hooks
+**검토 항목:**
+- React 특화 (리렌더링 최적화, 상태 관리, useEffect)
+- 성능 (번들 사이즈, lazy loading, API 최적화)
+- 보안 (XSS, 민감 정보 노출)
+- 접근성 (a11y, 시맨틱 HTML, ARIA)
+- TypeScript 타입 안전성
 
-**생성 예시:**
-```typescript
-describe('UserProfile', () => {
-  it('should render user information', () => {
-    render(<UserProfile user={mockUser} />);
-    expect(screen.getByText('John Doe')).toBeInTheDocument();
-  });
+#### 백엔드 파일
+- Spring Boot: `*Controller.java`, `*Service.java`, `*Repository.java`
+- Node.js/Express: `*route.ts`, `*controller.ts`, `*service.ts`
+- 백엔드 디렉토리: `src/api/`, `src/services/`, `src/main/java/`
 
-  it('should handle edit button click', () => {
-    const onEdit = jest.fn();
-    render(<UserProfile user={mockUser} onEdit={onEdit} />);
-    fireEvent.click(screen.getByRole('button', { name: 'Edit' }));
-    expect(onEdit).toHaveBeenCalledWith(mockUser.id);
-  });
-});
+**검토 항목:**
+- 아키텍처 (계층 분리, 의존성, SOLID)
+- 보안 (SQL Injection, 인증/인가, 입력 검증)
+- 성능 (쿼리 최적화, 캐싱, 비동기 처리)
+- 에러 처리 (예외 처리, 로깅)
+- 데이터베이스 (N+1 문제, 트랜잭션)
+
+#### 풀스택 변경사항
+프론트엔드와 백엔드 파일이 모두 포함된 경우, 두 가지 관점을 모두 적용하여 종합적인 리뷰를 제공합니다.
+
+### 리뷰 결과 형식
+
+```markdown
+# 코드 리뷰 결과
+
+## 📊 변경사항 요약
+- 총 변경 파일: 5개
+- 프론트엔드: 3개
+- 백엔드: 2개
+
+## 🔍 상세 리뷰
+
+### UserProfile.tsx - 프론트엔드
+
+#### 🔴 Critical Issues
+- [XSS 취약점] dangerouslySetInnerHTML 사용 시 sanitize 누락
+
+#### 🟡 Warnings
+- [성능] useCallback 누락으로 불필요한 리렌더링 발생
+
+#### ✅ Good Practices
+- TypeScript 타입 정의가 명확함
 ```
 
-#### 3. 백엔드 테스트 생성
-**지원 대상:**
-- API 엔드포인트 (성공/실패/인증)
-- Service 레이어 (비즈니스 로직, 에러 처리)
-- Repository (CRUD, 쿼리, 트랜잭션)
+### 참고 자료
 
-**테스트 프레임워크:**
-- Jest + Supertest (API 테스트)
-- Jest (단위 테스트)
+자세한 리뷰 기준:
+- [프론트엔드 리뷰 가이드](.claude/skills/code-review/references/frontend-review-guide.md)
+- [백엔드 리뷰 가이드](.claude/skills/code-review/references/backend-review-guide.md)
 
-**생성 예시:**
-```typescript
-describe('POST /api/users', () => {
-  it('should create user successfully', async () => {
-    const response = await request(app)
-      .post('/api/users')
-      .send({ name: 'John', email: 'john@example.com' })
-      .expect(201);
+---
 
-    expect(response.body).toHaveProperty('id');
-    expect(response.body.name).toBe('John');
-  });
+## 테스트 생성 스킬
 
-  it('should validate required fields', async () => {
-    await request(app)
-      .post('/api/users')
-      .send({})
-      .expect(400);
-  });
-});
+프로젝트의 프론트엔드와 백엔드 코드에 대한 테스트를 자동으로 생성합니다.
+
+### 1. Backend Test Generator - Spring Boot 테스트 생성
+
+Spring Boot 애플리케이션의 단위 테스트와 통합 테스트를 자동으로 생성합니다.
+
+**사용 방법:**
+```
+backend-test-generator
 ```
 
-#### 4. 기존 테스트 업데이트
-- 변경된 함수 시그니처에 맞춰 테스트 수정
-- 새로운 기능에 대한 테스트 케이스 추가
-- Deprecated된 테스트 자동 감지 및 제거
-
-### 테스트 커버리지 목표
-
-스킬이 다음 항목들을 자동으로 테스트합니다:
-
-**프론트엔드:**
-- ✅ 컴포넌트 렌더링
-- ✅ Props 전달 및 검증
-- ✅ 사용자 이벤트 처리
-- ✅ 조건부 렌더링
-- ✅ 비동기 데이터 로딩
-- ✅ 에러 상태 처리
-
-**백엔드:**
-- ✅ API 엔드포인트 정상 동작
-- ✅ 입력 검증 및 에러 처리
-- ✅ 인증/인가 체크
-- ✅ DB 작업 (CRUD)
-- ✅ 비즈니스 로직
-- ✅ 에러 응답 형식
-
-### 실행 결과 예시
-
+또는 자연어로 요청:
 ```
-🔍 변경사항 스캔 중...
-
-📁 감지된 변경 파일:
-  - src/components/UserProfile.tsx (프론트엔드)
-  - src/services/userService.ts (백엔드)
-
-⚙️ 테스트 생성 중...
-
-✅ 생성 완료:
-  - src/components/UserProfile.test.tsx (4 test cases)
-    └─ should render user information
-    └─ should handle edit button click
-    └─ should display loading state
-    └─ should handle error state
-
-  - src/services/userService.test.ts (6 test cases)
-    └─ should fetch user by id
-    └─ should create new user
-    └─ should update user
-    └─ should delete user
-    └─ should handle database errors
-    └─ should validate user data
-
-📊 테스트 커버리지: 87%
+"UserController에 대한 테스트 생성해줘"
+"백엔드 변경사항에 대한 테스트 작성해줘"
 ```
 
-### 필수 의존성
+**지원 스택:**
+- Spring Boot 2.x/3.x
+- JUnit 5 + Mockito
+- MockMvc, TestRestTemplate
+- @DataJpaTest, @WebMvcTest, @SpringBootTest
 
-테스트 실행을 위해 다음 패키지가 필요합니다:
+**생성되는 테스트 타입:**
+- **Controller 테스트**: MockMvc를 사용한 REST API 테스트
+- **Service 테스트**: Mockito를 사용한 비즈니스 로직 테스트
+- **Repository 테스트**: @DataJpaTest를 사용한 DB 테스트
+- **통합 테스트**: 전체 API 플로우 E2E 테스트
 
-```json
-{
-  "devDependencies": {
-    "@testing-library/react": "^14.0.0",
-    "@testing-library/react-hooks": "^8.0.1",
-    "@testing-library/jest-dom": "^6.1.5",
-    "jest": "^29.7.0",
-    "supertest": "^6.3.3",
-    "@types/jest": "^29.5.11",
-    "@types/supertest": "^6.0.2"
-  }
+**생성 예시 (Controller):**
+```java
+@WebMvcTest(UserController.class)
+class UserControllerTest {
+    @Autowired
+    private MockMvc mockMvc;
+
+    @MockBean
+    private UserService userService;
+
+    @Test
+    void testGetUser_Success() throws Exception {
+        given(userService.getUserById(1L))
+            .willReturn(userDto);
+
+        mockMvc.perform(get("/api/users/1"))
+            .andExpect(status().isOk())
+            .andExpect(jsonPath("$.name", is("John Doe")));
+    }
 }
 ```
 
-### 테스트 실행
+**자세한 내용:** [.claude/skills/backend-test-generator/SKILL.md](.claude/skills/backend-test-generator/SKILL.md)
 
-```bash
-# 모든 테스트 실행
-npm test
+---
 
-# 커버리지 리포트
-npm test -- --coverage
+### 2. Frontend Test Generator - React Native 테스트 생성
 
-# Watch 모드
-npm test -- --watch
+React Native 애플리케이션의 컴포넌트, 훅, 유틸리티 테스트를 자동으로 생성합니다.
 
-# 특정 파일만 테스트
-npm test -- UserProfile.test.tsx
+**사용 방법:**
+```
+frontend-test-generator
 ```
 
-### 추가 정보
+또는 자연어로 요청:
+```
+"UserProfile 컴포넌트 테스트 생성해줘"
+"useAuth 훅 테스트 업데이트해줘"
+```
 
-자세한 내용은 다음 문서를 참고하세요:
-- [스킬 가이드](.claude/skills/auto-test-generator/README.md) - 전체 사용법
-- [출력 형식](.claude/skills/auto-test-generator/FORMS.md) - 테스트 코드 생성 형식
-- [테스트 템플릿](.claude/skills/auto-test-generator/templates/) - 각종 테스트 템플릿
+**지원 스택:**
+- React Native + Expo
+- Jest + React Native Testing Library
+- @testing-library/react-hooks
+
+**생성되는 테스트 타입:**
+- **컴포넌트 테스트**: 렌더링, 상호작용, 접근성 테스트
+- **훅 테스트**: 커스텀 훅 로직 및 상태 변화 테스트
+- **유틸리티 테스트**: 순수 함수 및 헬퍼 함수 테스트
+- **통합 테스트**: 네비게이션 및 전체 플로우 테스트
+
+**생성 예시 (Component):**
+```typescript
+describe('UserProfile', () => {
+  it('should render user information correctly', () => {
+    render(<UserProfile user={mockUser} />);
+
+    expect(screen.getByText('John Doe')).toBeTruthy();
+    expect(screen.getByText('john@example.com')).toBeTruthy();
+  });
+
+  it('should handle button press', () => {
+    const mockOnPress = jest.fn();
+    render(<UserProfile user={mockUser} onEdit={mockOnPress} />);
+
+    fireEvent.press(screen.getByRole('button', { name: 'Edit' }));
+
+    expect(mockOnPress).toHaveBeenCalledTimes(1);
+  });
+});
+```
+
+**자세한 내용:** [.claude/skills/frontend-test-generator/SKILL.md](.claude/skills/frontend-test-generator/SKILL.md)
 
 ---
 
@@ -269,207 +227,50 @@ npm test -- UserProfile.test.tsx
 
 ---
 
-### 2. MCP Builder - MCP 서버 개발
+### 2. Prompt Enhancer - 프롬프트 강화
 
-외부 서비스와 Claude를 연결하는 MCP 서버를 만들 때 사용합니다.
-
-**사용 방법:**
-```
-"MCP 서버 만들고 싶어"
-"GitHub API를 Claude와 연결하고 싶어"
-```
-
-**지원 언어:**
-- Python (FastMCP)
-- TypeScript/Node.js (MCP SDK)
-
-**주요 기능:**
-- MCP 프로토콜 가이드
-- API 통합 베스트 프랙티스
-- 도구(Tool) 설계 원칙
-- 에러 처리 및 테스트 전략
-- 실전 예제 및 템플릿
-
-**포함 리소스:**
-- [Python 구현 가이드](.claude/skills/mcp-builder/reference/python_mcp_server.md)
-- [TypeScript 구현 가이드](.claude/skills/mcp-builder/reference/node_mcp_server.md)
-- [MCP 베스트 프랙티스](.claude/skills/mcp-builder/reference/mcp_best_practices.md)
-- [평가(Evaluation) 가이드](.claude/skills/mcp-builder/reference/evaluation.md)
-
-**자세한 내용:** [.claude/skills/mcp-builder/SKILL.md](.claude/skills/mcp-builder/SKILL.md)
-
----
-
-### 3. Webapp Testing - Playwright 테스팅
-
-로컬 웹 애플리케이션을 Playwright로 테스트할 때 사용합니다.
+간단한 개발 요청을 프로젝트 특화 정보를 반영하여 더 정확하고 상세한 요구사항으로 변환합니다.
 
 **사용 방법:**
 ```
-"웹앱 테스트해줘"
-"로그인 플로우 테스트 만들어줘"
+"로그인 화면 만들어줘"
+"사용자 목록 API 구현해줘"
 ```
 
 **주요 기능:**
-- UI 동작 검증
-- 브라우저 스크린샷 캡처
-- 브라우저 로그 확인
-- E2E 테스트 시나리오 작성
+- 프로젝트 컨텍스트 자동 수집 (프레임워크, 아키텍처, 코딩 스타일)
+- 프레임워크별 특화 정보 반영 (React Native, Spring Boot, Express.js 등)
+- 기존 코드 패턴 분석 및 적용
+- 구체적이고 실행 가능한 요구사항으로 변환
 
-**자세한 내용:** [.claude/skills/webapp-testing/SKILL.md](.claude/skills/webapp-testing/SKILL.md)
+**지원 프레임워크:**
+- **Frontend**: React (Vite/CRA), Next.js
+- **Backend**: Express.js, Spring Boot
+- **Mobile**: React Native
 
----
+**변환 예시:**
 
-### 4. Theme Factory - 테마 및 스타일링
-
-아티팩트(슬라이드, 문서, 웹페이지 등)에 테마를 적용할 때 사용합니다.
-
-**사용 방법:**
+사용자 입력:
 ```
-"이 문서에 테마 적용해줘"
-"프레젠테이션에 프로페셔널한 스타일 추가해줘"
+"로그인 화면 만들어줘"
 ```
 
-**주요 기능:**
-- 10가지 프리셋 테마
-- 커스텀 테마 생성
-- 색상 및 타이포그래피 적용
-- 다양한 아티팩트 타입 지원
-
-**자세한 내용:** [.claude/skills/theme-factory/SKILL.md](.claude/skills/theme-factory/SKILL.md)
-
----
-
-### 5. Design System Storybook - 자동 문서화
-
-디자인 시스템 컴포넌트를 만들 때 Storybook stories와 문서를 자동 생성합니다.
-
-**사용 방법:**
+강화된 프롬프트:
 ```
-"Button 컴포넌트에 Storybook 추가해줘"
-"이 컴포넌트 문서화해줘"
-```
-
-**주요 기능:**
-- Storybook stories 파일 자동 생성 (*.stories.tsx)
-- 컴포넌트 문서 자동 생성 (*.md)
-- 모든 variants와 props 예제 포함
-- 접근성(a11y) 정보 포함
-- Interactive controls 설정
-
-**생성되는 Stories:**
-- Default, Variants, Sizes
-- State Stories (Disabled, Loading)
-- Interactive Story (모든 controls)
-- AllVariants Story (한눈에 보기)
-- Accessibility Story
-
-**지원 컴포넌트:**
-- 기본: Button, Input, Checkbox, Card, Badge
-- 복잡: Modal, Dropdown, Tabs, DataTable
-- 레이아웃: Container, Grid, Stack
-
-**자세한 내용:** [.claude/skills/design-system-storybook/SKILL.md](.claude/skills/design-system-storybook/SKILL.md)
-
----
-
-### 6. React Native Feature Builder - 체계적 기능 개발
-
-React Native 앱 기능을 4단계 워크플로우로 체계적으로 개발합니다.
-
-**사용 방법:**
-```
-"사용자 로그인 기능 만들어줘"
-"게시글 목록 화면 구현해줘"
-"프로필 편집 기능 추가해줘"
-```
-
-**4단계 워크플로우:**
-
-**Phase 1: 요구사항 정리**
-- 사용자 스토리 작성
-- 기능 목록 및 우선순위
-- 제약사항 파악
-
-**Phase 2: 상세 기능 분석**
-- 화면 흐름 정의
-- Entity 및 데이터 모델 정의
-- API 엔드포인트 설계
-- 필요한 라이브러리 파악
-
-**Phase 3: Clean Architecture 설계**
-- Domain Layer (Entities, Use Cases, Repository Interfaces)
-- Data Layer (Repository 구현, Data Sources)
-- Presentation Layer (Screens, Hooks, Components)
-- 파일 구조 설계
-
-**Phase 4: 구현 및 컨벤션 적용**
-- 프로젝트 컨벤션 자동 적용
-- 레이어별 코드 생성
-- 테스트 코드 작성
-- 문서화
-
-**Clean Architecture 레이어:**
-```
-Presentation → Domain ← Data → Infrastructure
+React Native로 로그인 화면을 구현하되, 프로젝트의 Clean Architecture를 따라:
+- Presentation Layer에 LoginScreen.tsx 생성
+- Domain Layer에 LoginUseCase 생성
+- React Navigation 사용하여 화면 전환
+- 이메일/비밀번호 입력, 유효성 검증 포함
+- 기존 프로젝트의 Button, Input 컴포넌트 재사용
+- AsyncStorage를 사용한 토큰 저장
 ```
 
 **포함 리소스:**
-- [Clean Architecture 가이드](.claude/skills/react-native-feature-builder/reference/clean-architecture.md)
-- [React Native 컨벤션](.claude/skills/react-native-feature-builder/reference/react-native-conventions.md)
-- [Use Case 템플릿](.claude/skills/react-native-feature-builder/templates/usecase-template.md)
-- [Screen 템플릿](.claude/skills/react-native-feature-builder/templates/screen-template.md)
+- [프레임워크 가이드](.claude/skills/prompt-enhancer/references/framework-guides.md) - React, Spring Boot 등
+- [검색 전략](.claude/skills/prompt-enhancer/references/search-strategies.md) - 코드베이스 탐색 방법
 
-**자세한 내용:** [.claude/skills/react-native-feature-builder/SKILL.md](.claude/skills/react-native-feature-builder/SKILL.md)
-
----
-
-### 7. Spring Boot Feature Builder - 백엔드 API 체계적 개발
-
-Spring Boot 백엔드 API를 4단계 워크플로우로 체계적으로 개발합니다.
-
-**사용 방법:**
-```
-"사용자 관리 API 만들어줘"
-"게시글 CRUD API 구현해줘"
-"주문 생성 API 추가해줘"
-```
-
-**4단계 워크플로우:**
-
-**Phase 1: 요구사항 정리**
-- RESTful API 엔드포인트 목록
-- HTTP 메서드 및 상태 코드
-- 우선순위 설정
-
-**Phase 2: API 및 데이터 설계**
-- JPA Entity 설계
-- Request/Response DTO 설계
-- API 명세서 작성
-- Entity 관계 정의 (OneToMany, ManyToMany)
-
-**Phase 3: Layered Architecture 설계**
-- Controller Layer (REST API)
-- Service Layer (비즈니스 로직, 트랜잭션)
-- Repository Layer (JPA, 커스텀 쿼리)
-- Entity Layer (도메인 모델)
-
-**Phase 4: 구현 및 컨벤션 적용**
-- Spring Boot 컨벤션 자동 적용
-- 레이어별 코드 생성
-- GlobalExceptionHandler
-- 테스트 코드 (@DataJpaTest, @WebMvcTest)
-
-**Layered Architecture:**
-```
-Controller → Service → Repository → Entity
-```
-
-**포함 리소스:**
-- [Spring Boot 컨벤션](.claude/skills/spring-boot-feature-builder/reference/spring-boot-conventions.md)
-- [Service 템플릿](.claude/skills/spring-boot-feature-builder/templates/service-template.md)
-
-**자세한 내용:** [.claude/skills/spring-boot-feature-builder/SKILL.md](.claude/skills/spring-boot-feature-builder/SKILL.md)
+**자세한 내용:** [.claude/skills/prompt-enhancer/SKILL.md](.claude/skills/prompt-enhancer/SKILL.md)
 
 ---
 
@@ -492,19 +293,13 @@ Controller → Service → Repository → Entity
 ```
 .claude/
 ├── commands/                       # 슬래시 커맨드
-│   ├── code-review.md             # /code-review
-│   ├── review-frontend.md         # /review-frontend
-│   └── review-backend.md          # /review-backend
+│   └── code-review.md             # /code-review (deprecated, skill 사용 권장)
 ├── skills/                         # AI 스킬
-│   ├── auto-test-generator/       # 테스트 자동 생성
+│   ├── backend-test-generator/    # Spring Boot 테스트 생성
+│   ├── frontend-test-generator/   # React Native 테스트 생성
+│   ├── code-review/               # 코드 리뷰 (자동 분류)
 │   ├── skill-creator/             # 스킬 생성 가이드
-│   ├── mcp-builder/               # MCP 서버 개발
-│   ├── webapp-testing/            # Playwright 테스팅
-│   ├── theme-factory/             # 테마 적용
-│   ├── design-system-storybook/   # Storybook 자동 생성
-│   ├── react-native-feature-builder/  # React Native 개발
-│   ├── spring-boot-feature-builder/   # Spring Boot 개발
-│   └── project-guide.md           # 프로젝트 컨벤션
+│   └── prompt-enhancer/           # 프롬프트 강화
 └── README.md                       # 이 문서
 ```
 
@@ -549,21 +344,33 @@ Controller → Service → Repository → Entity
 
 1. **코드 작성 후 리뷰하기**
    ```
-   /code-review
+   code-review  # 자동으로 프론트/백엔드 분류하여 리뷰
+   ```
+   또는:
+   ```
+   "코드 리뷰해줘"
+   "변경사항 검토해줘"
    ```
 
 2. **테스트 코드 생성하기**
    ```
-   auto-test-generator
+   backend-test-generator   # Spring Boot 테스트
+   frontend-test-generator  # React Native 테스트
    ```
 
-3. **새로운 기능 개발하기**
+3. **프롬프트 강화하여 개발하기**
    ```
-   "사용자 로그인 기능 만들어줘"  (React Native)
-   "게시글 CRUD API 구현해줘"      (Spring Boot)
+   "로그인 화면 만들어줘"
+   "사용자 관리 API 구현해줘"
+   ```
+   → 자동으로 프로젝트 컨텍스트를 반영하여 상세한 요구사항으로 변환
+
+4. **커스텀 스킬 만들기**
+   ```
+   "새로운 스킬 만들고 싶어"
    ```
 
-4. **도움말 보기**
+5. **도움말 보기**
    ```
    /help
    ```
